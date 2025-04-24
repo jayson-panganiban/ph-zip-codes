@@ -18,7 +18,8 @@ function Regions() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setRegions(getRegions());
+    const allRegions = getRegions();
+    setRegions(allRegions);
   }, []);
 
   const debouncedQuery = useDebouncedValue(searchQuery ?? "", 350);
