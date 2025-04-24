@@ -9,39 +9,30 @@ import type { ZipCode } from "@/types";
 import { searchZipCodes } from "@/utils/dataUtils";
 import { Globe, Mail, Map, MapPin, SearchX } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 
 function Home() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
-  const debouncedQuery = useDebouncedValue(searchQuery ?? "", 250);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setSearchQuery(searchParams.get("q") || "");
   }, [searchParams]);
 
-  // Update URL on search
-  useEffect(() => {
-    if (searchQuery === null) return;
-    const trimmed = debouncedQuery.trim();
-    if (trimmed.length >= 3) {
-      router.replace(`/?q=${encodeURIComponent(trimmed)}`);
-    } else if (trimmed.length === 0) {
-      router.replace("/");
-    }
-  }, [debouncedQuery, router, searchQuery]);
+  const debouncedQuery = useDebouncedValue(searchQuery ?? "", 350);
 
-  // Focus input on mount
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  const results = useMemo<ZipCode[]>(() => {
+    const trimmedQuery = debouncedQuery.trim().toLowerCase();
+    if (trimmedQuery.length >= 3) {
+      return searchZipCodes(trimmedQuery);
+    }
+    return [];
+  }, [debouncedQuery]);
 
   const handleClear = () => {
-    setSearchQuery(null);
+    setSearchQuery("");
     inputRef.current?.focus();
   };
 
@@ -50,17 +41,6 @@ function Home() {
       handleClear();
     }
   };
-
-  // Derive results from debouncedQuery
-  const results = useMemo<ZipCode[]>(() => {
-    const trimmed = debouncedQuery.trim();
-    if (trimmed.length >= 3) {
-      return searchZipCodes(trimmed);
-    }
-    return [];
-  }, [debouncedQuery]);
-
-  if (searchQuery === null) return null;
 
   return (
     <main className="min-h-screen flex flex-col bg-muted/40">
