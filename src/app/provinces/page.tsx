@@ -9,46 +9,39 @@ import SectionHeader from "@/components/SectionHeader";
 import Spinner from "@/components/Spinner";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { Map } from "lucide-react";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Province } from "../../types";
 import { getProvinces } from "../../utils/dataUtils";
 
 function Provinces() {
+  const searchParams = useSearchParams();
+  const regionParam = searchParams.get("region") || undefined;
+
   const [allProvinces, setAllProvinces] = useState<Province[]>([]);
-  const [filteredProvinces, setFilteredProvinces] = useState<Province[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Load all provinces on mount
   useEffect(() => {
-    const provinces = getProvinces();
-    setAllProvinces(provinces);
-    setFilteredProvinces(provinces);
-  }, []);
+    setAllProvinces(getProvinces(regionParam));
+  }, [regionParam]);
 
-  // Debounced search (min 2 chars)
-  const debouncedQuery = useDebouncedValue(searchQuery, 250);
+  const debouncedQuery = useDebouncedValue(searchQuery ?? "", 350);
 
-  // Filter provinces on search query change
-  useEffect(() => {
+  const filteredProvinces = useMemo(() => {
     const query = debouncedQuery.trim().toLowerCase();
-    if (query.length >= 2) {
-      setFilteredProvinces(
-        allProvinces.filter(
-          (province) =>
-            province.name.toLowerCase().includes(query) ||
-            province.region.toLowerCase().includes(query)
-        )
+    if (query.length >= 3) {
+      return allProvinces.filter(
+        (province) =>
+          province.name.toLowerCase().includes(query) ||
+          province.region.toLowerCase().includes(query)
       );
-    } else {
-      setFilteredProvinces(allProvinces);
     }
-  }, [debouncedQuery, allProvinces]);
+    return allProvinces;
+  }, [allProvinces, debouncedQuery]);
 
-  // Clear search query and reset filtered provinces
   const handleClear = () => {
-    setSearchQuery("");
-    setFilteredProvinces(allProvinces);
+    setSearchQuery(null);
     inputRef.current?.focus();
   };
 
@@ -78,7 +71,7 @@ function Provinces() {
           autoComplete="off"
         >
           <SearchBar
-            value={searchQuery}
+            value={searchQuery ?? ""}
             onChange={setSearchQuery}
             onClear={handleClear}
             onKeyDown={handleKeyDown}

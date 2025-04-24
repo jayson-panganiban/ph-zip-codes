@@ -8,42 +8,33 @@ import SectionHeader from "@/components/SectionHeader";
 import Spinner from "@/components/Spinner";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { Globe } from "lucide-react";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Region } from "../../types";
 import { getRegions } from "../../utils/dataUtils";
 
 function Regions() {
   const [regions, setRegions] = useState<Region[]>([]);
-  const [filteredRegions, setFilteredRegions] = useState<Region[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Load all regions on mount
   useEffect(() => {
-    const allRegions = getRegions();
-    setRegions(allRegions);
-    setFilteredRegions(allRegions);
+    setRegions(getRegions());
   }, []);
 
-  // Debounced search (min 2 chars)
-  const debouncedQuery = useDebouncedValue(searchQuery, 250);
+  const debouncedQuery = useDebouncedValue(searchQuery ?? "", 350);
 
-  // Filter regions on search query change
-  useEffect(() => {
+  const filteredRegions = useMemo(() => {
     const query = debouncedQuery.trim().toLowerCase();
-    if (query.length >= 2) {
-      setFilteredRegions(
-        regions.filter((region) => region.name.toLowerCase().includes(query))
+    if (query.length >= 3) {
+      return regions.filter((region) =>
+        region.name.toLowerCase().includes(query)
       );
-    } else {
-      setFilteredRegions(regions);
     }
-  }, [debouncedQuery, regions]);
+    return regions;
+  }, [regions, debouncedQuery]);
 
-  // Clear search query and reset filtered regions
   const handleClear = () => {
-    setSearchQuery("");
-    setFilteredRegions(regions);
+    setSearchQuery(null);
     inputRef.current?.focus();
   };
 
@@ -73,7 +64,7 @@ function Regions() {
           autoComplete="off"
         >
           <SearchBar
-            value={searchQuery}
+            value={searchQuery ?? ""}
             onChange={setSearchQuery}
             onClear={handleClear}
             onKeyDown={handleKeyDown}

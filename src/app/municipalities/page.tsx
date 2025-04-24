@@ -9,72 +9,41 @@ import SectionHeader from "@/components/SectionHeader";
 import Spinner from "@/components/Spinner";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { MapPin } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Municipality } from "../../types";
 import { getMunicipalities } from "../../utils/dataUtils";
 
 function Municipalities() {
-  const router = useRouter();
-
   const searchParams = useSearchParams();
+  const provinceParam = searchParams.get("province") || undefined;
 
-  const [ready, setReady] = useState(false);
   const [allMunicipalities, setAllMunicipalities] = useState<Municipality[]>(
     []
   );
-  const [filteredMunicipalities, setFilteredMunicipalities] = useState<
-    Municipality[]
-  >([]);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // On mount, initialize query from search params (client only)
   useEffect(() => {
-    setSearchQuery(searchParams.get("q") || "");
-    setReady(true);
-  }, [searchParams]);
+    setAllMunicipalities(getMunicipalities(provinceParam));
+  }, [provinceParam]);
 
-  // Load all municipalities on mount
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      const municipalities = getMunicipalities();
+  const debouncedQuery = useDebouncedValue(searchQuery ?? "", 350);
 
-      setAllMunicipalities(municipalities);
-      setFilteredMunicipalities(municipalities);
-      setLoading(false);
-    }, 350);
-  }, []);
-
-  // Debounced search (min 2 chars)
-  const debouncedQuery = useDebouncedValue(searchQuery ?? "", 250);
-
-  // Filter municipalities on search query change
-  useEffect(() => {
-    if (!ready || loading) return;
+  const filteredMunicipalities = useMemo(() => {
     const query = debouncedQuery.trim().toLowerCase();
-    if (query.length >= 2) {
-      setFilteredMunicipalities(
-        allMunicipalities.filter(
-          (municipality) =>
-            municipality.name.toLowerCase().includes(query) ||
-            municipality.zipCode.includes(query) ||
-            municipality.province.toLowerCase().includes(query)
-        )
+    if (query.length >= 3) {
+      return allMunicipalities.filter(
+        (municipality) =>
+          municipality.name.toLowerCase().includes(query) ||
+          municipality.province.toLowerCase().includes(query)
       );
-    } else {
-      setFilteredMunicipalities(allMunicipalities);
     }
-  }, [debouncedQuery, allMunicipalities, ready, loading]);
+    return allMunicipalities;
+  }, [allMunicipalities, debouncedQuery]);
 
-  // Clear search query and reset filtered municipalities
   const handleClear = () => {
-    setSearchQuery("");
-    setFilteredMunicipalities(allMunicipalities);
-    router.replace("/municipalities");
+    setSearchQuery(null);
     inputRef.current?.focus();
   };
 
@@ -83,9 +52,6 @@ function Municipalities() {
       handleClear();
     }
   };
-
-  // Don't render anything until ready
-  if (!ready || searchQuery === null) return null;
 
   return (
     <main className="min-h-screen flex flex-col bg-muted/40">
@@ -120,27 +86,23 @@ function Municipalities() {
         </form>
 
         <div className="w-full min-h-[200px] flex items-center justify-center">
-          {loading ? (
-            <Spinner />
-          ) : (
-            <ResultsGrid
-              items={filteredMunicipalities}
-              ariaLabel="Municipalities"
-              emptyMessage={
-                <p className="text-center text-gray-500 mt-8">
-                  No municipalities found matching your search.
-                </p>
-              }
-              renderItem={(municipality) => (
-                <Card
-                  key={`${municipality.name}-${municipality.zipCode}`}
-                  title={municipality.name}
-                  zipCode={municipality.zipCode}
-                  additionalInfo={`Province: ${municipality.province}`}
-                />
-              )}
-            />
-          )}
+          <ResultsGrid
+            items={filteredMunicipalities}
+            ariaLabel="Municipalities"
+            emptyMessage={
+              <p className="text-center text-gray-500 mt-8">
+                No municipalities found matching your search.
+              </p>
+            }
+            renderItem={(municipality) => (
+              <Card
+                key={`${municipality.name}-${municipality.zipCode}`}
+                title={municipality.name}
+                zipCode={municipality.zipCode}
+                additionalInfo={`Province: ${municipality.province}`}
+              />
+            )}
+          />
         </div>
       </div>
 
