@@ -2,6 +2,7 @@
 
 import BackToTop from "@/components/BackToTop";
 import SearchBar from "@/components/SearchBar";
+import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import type { ZipCode } from "@/types";
@@ -9,9 +10,9 @@ import { searchZipCodes } from "@/utils/dataUtils";
 import { Globe, Mail, Map, MapPin, SearchX } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
-export default function Home() {
+function Home() {
   const router = useRouter();
   const [query, setQuery] = useState<string | null>(null);
   const searchParams = useSearchParams();
@@ -192,5 +193,13 @@ export default function Home() {
 
       <BackToTop />
     </main>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <Home />
+    </Suspense>
   );
 }

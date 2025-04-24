@@ -10,17 +10,16 @@ import Spinner from "@/components/Spinner";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { MapPin } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Municipality } from "../../types";
 import { getMunicipalities } from "../../utils/dataUtils";
 
-export default function MunicipalitiesPage() {
+function Municipalities() {
   const router = useRouter();
+
   const searchParams = useSearchParams();
 
   const [ready, setReady] = useState(false);
-
-  // State
   const [allMunicipalities, setAllMunicipalities] = useState<Municipality[]>(
     []
   );
@@ -29,8 +28,10 @@ export default function MunicipalitiesPage() {
   >([]);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // On mount, initialize query from search params (client only)
   useEffect(() => {
     setSearchQuery(searchParams.get("q") || "");
     setReady(true);
@@ -41,6 +42,7 @@ export default function MunicipalitiesPage() {
     setLoading(true);
     setTimeout(() => {
       const municipalities = getMunicipalities();
+
       setAllMunicipalities(municipalities);
       setFilteredMunicipalities(municipalities);
       setLoading(false);
@@ -50,6 +52,7 @@ export default function MunicipalitiesPage() {
   // Debounced search (min 2 chars)
   const debouncedQuery = useDebouncedValue(searchQuery ?? "", 250);
 
+  // Filter municipalities on search query change
   useEffect(() => {
     if (!ready || loading) return;
     const query = debouncedQuery.trim().toLowerCase();
@@ -67,6 +70,7 @@ export default function MunicipalitiesPage() {
     }
   }, [debouncedQuery, allMunicipalities, ready, loading]);
 
+  // Clear search query and reset filtered municipalities
   const handleClear = () => {
     setSearchQuery("");
     setFilteredMunicipalities(allMunicipalities);
@@ -80,6 +84,7 @@ export default function MunicipalitiesPage() {
     }
   };
 
+  // Don't render anything until ready
   if (!ready || searchQuery === null) return null;
 
   return (
@@ -141,5 +146,13 @@ export default function MunicipalitiesPage() {
 
       <BackToTop />
     </main>
+  );
+}
+
+export default function MunicipalitiesPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <Municipalities />
+    </Suspense>
   );
 }

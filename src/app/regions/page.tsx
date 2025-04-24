@@ -5,18 +5,20 @@ import Card from "@/components/Card";
 import { ResultsGrid } from "@/components/ResultsGrid";
 import SearchBar from "@/components/SearchBar";
 import SectionHeader from "@/components/SectionHeader";
+import Spinner from "@/components/Spinner";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { Globe } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Region } from "../../types";
 import { getRegions } from "../../utils/dataUtils";
 
-export default function RegionsPage() {
+function Regions() {
   const [regions, setRegions] = useState<Region[]>([]);
   const [filteredRegions, setFilteredRegions] = useState<Region[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Load all regions on mount
   useEffect(() => {
     const allRegions = getRegions();
     setRegions(allRegions);
@@ -26,6 +28,7 @@ export default function RegionsPage() {
   // Debounced search (min 2 chars)
   const debouncedQuery = useDebouncedValue(searchQuery, 250);
 
+  // Filter regions on search query change
   useEffect(() => {
     const query = debouncedQuery.trim().toLowerCase();
     if (query.length >= 2) {
@@ -37,6 +40,7 @@ export default function RegionsPage() {
     }
   }, [debouncedQuery, regions]);
 
+  // Clear search query and reset filtered regions
   const handleClear = () => {
     setSearchQuery("");
     setFilteredRegions(regions);
@@ -100,5 +104,13 @@ export default function RegionsPage() {
       </div>
       <BackToTop />
     </main>
+  );
+}
+
+export default function RegionsPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <Regions />
+    </Suspense>
   );
 }

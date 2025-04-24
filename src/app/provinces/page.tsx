@@ -1,17 +1,19 @@
 "use client";
+
 import BackButton from "@/components/BackButton";
 import BackToTop from "@/components/BackToTop";
 import Card from "@/components/Card";
 import { ResultsGrid } from "@/components/ResultsGrid";
 import SearchBar from "@/components/SearchBar";
 import SectionHeader from "@/components/SectionHeader";
+import Spinner from "@/components/Spinner";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { Map } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Province } from "../../types";
 import { getProvinces } from "../../utils/dataUtils";
 
-export default function ProvincesPage() {
+function Provinces() {
   const [allProvinces, setAllProvinces] = useState<Province[]>([]);
   const [filteredProvinces, setFilteredProvinces] = useState<Province[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,6 +29,7 @@ export default function ProvincesPage() {
   // Debounced search (min 2 chars)
   const debouncedQuery = useDebouncedValue(searchQuery, 250);
 
+  // Filter provinces on search query change
   useEffect(() => {
     const query = debouncedQuery.trim().toLowerCase();
     if (query.length >= 2) {
@@ -42,6 +45,7 @@ export default function ProvincesPage() {
     }
   }, [debouncedQuery, allProvinces]);
 
+  // Clear search query and reset filtered provinces
   const handleClear = () => {
     setSearchQuery("");
     setFilteredProvinces(allProvinces);
@@ -109,5 +113,13 @@ export default function ProvincesPage() {
         <BackToTop />
       </div>
     </main>
+  );
+}
+
+export default function ProvincesPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <Provinces />
+    </Suspense>
   );
 }
