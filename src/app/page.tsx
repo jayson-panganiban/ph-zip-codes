@@ -10,34 +10,30 @@ import { searchZipCodes } from "@/utils/dataUtils";
 import { Globe, Mail, Map, MapPin, SearchX } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 
 function Home() {
   const router = useRouter();
-  const [query, setQuery] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const debouncedQuery = useDebouncedValue(query ?? "", 250);
-  const [results, setResults] = useState<ZipCode[]>([]);
+
+  const [searchQuery, setSearchQuery] = useState<string | null>(null);
+  const debouncedQuery = useDebouncedValue(searchQuery ?? "", 250);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // On mount, initialize query from search params (client only)
   useEffect(() => {
-    setQuery(searchParams.get("q") || "");
+    setSearchQuery(searchParams.get("q") || "");
   }, [searchParams]);
 
+  // Update URL on search
   useEffect(() => {
-    if (query === null) return; // Don't run until query is initialized
+    if (searchQuery === null) return;
     const trimmed = debouncedQuery.trim();
     if (trimmed.length >= 3) {
-      setResults(searchZipCodes(trimmed));
       router.replace(`/?q=${encodeURIComponent(trimmed)}`);
-    } else {
-      setResults([]);
-      if (trimmed.length === 0) {
-        router.replace("/");
-      }
+    } else if (trimmed.length === 0) {
+      router.replace("/");
     }
-  }, [debouncedQuery, router, query]);
+  }, [debouncedQuery, router, searchQuery]);
 
   // Focus input on mount
   useEffect(() => {
@@ -45,9 +41,7 @@ function Home() {
   }, []);
 
   const handleClear = () => {
-    setQuery("");
-    setResults([]);
-    router.replace("/");
+    setSearchQuery(null);
     inputRef.current?.focus();
   };
 
@@ -57,7 +51,16 @@ function Home() {
     }
   };
 
-  if (query === null) return null;
+  // Derive results from debouncedQuery
+  const results = useMemo<ZipCode[]>(() => {
+    const trimmed = debouncedQuery.trim();
+    if (trimmed.length >= 3) {
+      return searchZipCodes(trimmed);
+    }
+    return [];
+  }, [debouncedQuery]);
+
+  if (searchQuery === null) return null;
 
   return (
     <main className="min-h-screen flex flex-col bg-muted/40">
@@ -76,8 +79,8 @@ function Home() {
           autoComplete="off"
         >
           <SearchBar
-            value={query ?? ""}
-            onChange={setQuery}
+            value={searchQuery ?? ""}
+            onChange={setSearchQuery}
             onClear={handleClear}
             onKeyDown={handleKeyDown}
             placeholder="Type a city, municipality, zip code, or province…"
