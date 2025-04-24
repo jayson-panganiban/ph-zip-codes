@@ -45,7 +45,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${satoshi.variable}`}>
-      <body className="font-inter">
+      <body className="font-inter" style={{ overscrollBehaviorX: "auto" }}>
         <Header />
         <main className="container mx-auto p-4">{children}</main>
         <Footer />
