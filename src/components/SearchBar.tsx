@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import React, { useRef } from "react";
 
@@ -21,7 +21,7 @@ export default function SearchBar({
   placeholder = "Search…",
   onClear,
   onKeyDown,
-  autoFocus,
+  autoFocus = true,
   className = "",
   inputClassName = "",
   "aria-label": ariaLabel,
@@ -42,6 +42,8 @@ export default function SearchBar({
         aria-label={ariaLabel || placeholder}
         autoFocus={autoFocus}
         autoComplete="off"
+        spellCheck={false}
+        data-ms-editor="false"
       />
       {value && onClear && (
         <Button
