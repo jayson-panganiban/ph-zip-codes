@@ -19,5 +19,6 @@ export interface Province {
 export interface Municipality {
   name: string;
   province: string;
+  region: string;
   zipCode: string;
 }

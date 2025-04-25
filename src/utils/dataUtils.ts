@@ -96,6 +96,8 @@ export const getMunicipalities = (provinceFilter?: string): Municipality[] => {
   return Array.from(municipalityMap.entries()).map(([key, data]) => ({
     name: key.split("-")[0],
     province: data.province,
+    region:
+      zipCodes.find((item) => item.province === data.province)?.region || "",
     zipCode: data.zipCode,
   }));
 };

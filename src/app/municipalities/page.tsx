@@ -25,8 +25,12 @@ function Municipalities() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setAllMunicipalities(getMunicipalities(provinceParam));
-  }, [provinceParam]);
+    if (searchQuery && searchQuery.trim().length > 0) {
+      setAllMunicipalities(getMunicipalities());
+    } else {
+      setAllMunicipalities(getMunicipalities(provinceParam));
+    }
+  }, [provinceParam, searchQuery]);
 
   const debouncedQuery = useDebouncedValue(searchQuery ?? "", 350);
 
@@ -37,6 +41,7 @@ function Municipalities() {
         (municipality) =>
           municipality.name.toLowerCase().includes(query) ||
           municipality.province.toLowerCase().includes(query) ||
+          municipality.region.toLowerCase().includes(query) ||
           municipality.zipCode.includes(query)
       );
     }
@@ -100,7 +105,8 @@ function Municipalities() {
                 key={`${municipality.name}-${municipality.zipCode}`}
                 title={municipality.name}
                 zipCode={municipality.zipCode}
-                additionalInfo={`Province: ${municipality.province}`}
+                subtitle={municipality.province}
+                additionalInfo={municipality.region}
               />
             )}
           />
