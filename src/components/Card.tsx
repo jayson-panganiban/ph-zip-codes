@@ -21,8 +21,8 @@ export default function Card({
   children,
   titleClassName,
 }: CardProps) {
-  return (
-    <div className="bg-card border border-border rounded-xl shadow-md p-6 flex flex-col items-center transition-transform hover:scale-[1.03] hover:shadow-lg">
+  const cardContent = (
+    <>
       {children}
       <h2
         className={`text-xl font-semibold mb-2 text-center ${
@@ -46,14 +46,37 @@ export default function Card({
           {additionalInfo}
         </p>
       )}
-      {link && (
-        <Link
-          href={link}
-          className="inline-block mt-auto text-primary text-sm hover:underline"
-        >
+      {link && <span className="sr-only">{linkText ?? "View Details"}</span>}
+    </>
+  );
+
+  if (link) {
+    return (
+      <Link
+        href={link}
+        className="bg-card border border-border rounded-xl shadow-md p-6 flex flex-col items-center transition-transform hover:scale-[1.03] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        aria-label={`${title}${
+          subtitle ? `, ${subtitle}${zipCode ? `, ${zipCode}` : ""}` : ""
+        }`}
+      >
+        {cardContent}
+        <span className="mt-auto text-primary text-sm underline">
           {linkText ?? "View Details →"}
-        </Link>
-      )}
+        </span>
+      </Link>
+    );
+  }
+
+  // Informational card, optionally focusable
+  return (
+    <div
+      className="bg-card border border-border rounded-xl shadow-md p-6 flex flex-col items-center transition-transform hover:scale-[1.03] hover:shadow-lg"
+      tabIndex={0}
+      aria-label={`${title}${
+        subtitle ? `, ${subtitle}${zipCode ? `, ${zipCode}` : ""}` : ""
+      }`}
+    >
+      {cardContent}
     </div>
   );
 }
