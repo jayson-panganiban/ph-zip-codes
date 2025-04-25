@@ -23,8 +23,12 @@ function Provinces() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setAllProvinces(getProvinces(regionParam));
-  }, [regionParam]);
+    if (searchQuery && searchQuery.trim().length > 0) {
+      setAllProvinces(getProvinces());
+    } else {
+      setAllProvinces(getProvinces(regionParam));
+    }
+  }, [regionParam, searchQuery]);
 
   const debouncedQuery = useDebouncedValue(searchQuery ?? "", 350);
 
