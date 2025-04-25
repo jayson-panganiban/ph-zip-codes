@@ -36,7 +36,8 @@ function Municipalities() {
       return allMunicipalities.filter(
         (municipality) =>
           municipality.name.toLowerCase().includes(query) ||
-          municipality.province.toLowerCase().includes(query)
+          municipality.province.toLowerCase().includes(query) ||
+          municipality.zipCode.includes(query)
       );
     }
     return allMunicipalities;
