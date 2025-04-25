@@ -1,13 +1,14 @@
 "use client";
 
 import BackToTop from "@/components/BackToTop";
+import Card from "@/components/Card";
 import SearchBar from "@/components/SearchBar";
 import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import type { ZipCode } from "@/types";
 import { searchZipCodes } from "@/utils/dataUtils";
-import { Globe, Mail, Map, MapPin, SearchX } from "lucide-react";
+import { Globe, Map, MapPin, SearchX } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
@@ -119,34 +120,13 @@ function Home() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {results.map((result, index) => (
-                  <div
+                  <Card
                     key={`${result.region}-${result.province}-${result.municipality}-${result.zipCode}-${index}`}
-                    className="bg-card border border-border rounded-xl shadow p-4 flex flex-col gap-2"
-                    aria-label={`Result for ${result.municipality}`}
-                  >
-                    <div className="flex items-center gap-2 text-lg font-semibold">
-                      <Mail
-                        className="w-5 h-5 text-primary"
-                        aria-hidden="true"
-                      />
-                      {result.municipality}
-                    </div>
-                    <div className="flex items-center gap-2 text-base">
-                      <MapPin
-                        className="w-4 h-4 text-muted-foreground"
-                        aria-hidden="true"
-                      />
-                      <span className="font-mono">{result.zipCode}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Map className="w-4 h-4" aria-hidden="true" />
-                      {result.province}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Globe className="w-4 h-4" aria-hidden="true" />
-                      {result.region}
-                    </div>
-                  </div>
+                    title={result.municipality}
+                    zipCode={result.zipCode}
+                    subtitle={result.province}
+                    additionalInfo={result.region}
+                  />
                 ))}
               </div>
             </div>
