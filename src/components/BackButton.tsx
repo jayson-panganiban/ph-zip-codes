@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { JSX } from "react";
+import React from "react";
 
 interface BackButtonProps {
   label?: string;
@@ -15,7 +15,7 @@ export default function BackButton({
   label = "Back",
   className,
   fallbackUrl = "/",
-}: BackButtonProps): JSX.Element {
+}: BackButtonProps) {
   const router = useRouter();
 
   const handleBack = React.useCallback(() => {
