@@ -154,7 +154,7 @@ function Home() {
         </div>
 
         {(!debouncedQuery || debouncedQuery.trim().length < 3) && (
-          <div className="w-full mt-16 max-w-4xl mx-auto">
+          <div className="w-full max-w-4xl mx-auto">
             <div className="bg-card/50 rounded-lg p-6 border">
               <div className="grid md:grid-cols-2 gap-6 text-sm text-muted-foreground">
                 <div>
@@ -176,12 +176,6 @@ function Home() {
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-medium text-foreground mb-2">Coverage</h3>
-                  <p className="mb-3">
-                    This directory covers all regions including Metro Manila,
-                    Luzon, Visayas, and Mindanao. Find ZIP codes for all 81
-                    provinces and over 1,600 municipalities and cities.
-                  </p>
                   <h3 className="font-medium text-foreground mb-2">
                     Popular Searches
                   </h3>
@@ -189,6 +183,12 @@ function Home() {
                     Manila (1000-1096), Quezon City (1100-1128), Makati
                     (1200-1235), Cebu City (6000), Davao City (8000), and other
                     major Philippine cities.
+                  </p>
+                  <h3 className="font-medium text-foreground mb-2">Coverage</h3>
+                  <p className="mb-3">
+                    This directory covers all regions including Metro Manila,
+                    Luzon, Visayas, and Mindanao. Find ZIP codes for all 81
+                    provinces and over 1,600 municipalities and cities.
                   </p>
                 </div>
               </div>
