@@ -14,8 +14,10 @@ const icons = {
 
 export default function ThemeSelector() {
   const [theme, setTheme] = useState<Theme>("system");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const stored = localStorage.getItem("theme") as Theme | null;
     if (stored) setTheme(stored);
   }, []);
@@ -34,8 +36,28 @@ export default function ThemeSelector() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  // Prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="flex gap-2">
+        {(["light", "dark", "system"] as Theme[]).map((t) => (
+          <Button
+            key={t}
+            type="button"
+            size="icon"
+            variant="ghost"
+            className="w-10 h-10"
+            disabled
+          >
+            {icons[t]}
+          </Button>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1 p-1 bg-muted/30 dark:bg-muted/20 rounded-lg border border-border/50 backdrop-blur-sm">
       {(["light", "dark", "system"] as Theme[]).map((t) => (
         <Button
           key={t}
@@ -44,7 +66,14 @@ export default function ThemeSelector() {
           variant={theme === t ? "default" : "ghost"}
           aria-label={`Switch to ${t} theme`}
           onClick={() => setTheme(t)}
-          className={theme === t ? "bg-primary text-primary-foreground" : ""}
+          className={`
+            w-10 h-10 transition-all duration-200 
+            ${
+              theme === t
+                ? "bg-primary text-primary-foreground shadow-md scale-105 btn-primary"
+                : "hover:bg-muted/60 dark:hover:bg-muted/40"
+            }
+          `}
         >
           {icons[t]}
         </Button>

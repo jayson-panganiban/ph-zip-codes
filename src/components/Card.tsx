@@ -54,7 +54,7 @@ export default function Card({
     return (
       <Link
         href={link}
-        className="bg-card border border-border rounded-xl shadow-md p-6 flex flex-col items-center transition-transform hover:scale-[1.03] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        className="card rounded-xl shadow-md p-6 flex flex-col items-center transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary"
         aria-label={`${title}${
           subtitle ? `, ${subtitle}${zipCode ? `, ${zipCode}` : ""}` : ""
         }`}
@@ -70,7 +70,7 @@ export default function Card({
   // Informational card, optionally focusable
   return (
     <div
-      className="bg-card border border-border rounded-xl shadow-md p-6 flex flex-col items-center transition-transform hover:scale-[1.03] hover:shadow-lg"
+      className="card rounded-xl shadow-md p-6 flex flex-col items-center transition-all hover:scale-[1.02]"
       tabIndex={0}
       aria-label={`${title}${
         subtitle ? `, ${subtitle}${zipCode ? `, ${zipCode}` : ""}` : ""

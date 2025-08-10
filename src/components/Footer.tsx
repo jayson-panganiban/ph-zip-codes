@@ -40,7 +40,7 @@ export default function Footer() {
       <div className="flex items-center gap-4 mb-1">
         <a
           href="mailto:jsoncp@proton.me"
-          className="flex items-center gap-1 hover:text-accent transition"
+          className="flex items-center gap-1 hover:text-yellow-500 hover:brightness-125 dark:hover:text-yellow-400 transition"
           aria-label="Email"
         >
           <Mail className="w-4 h-4" aria-hidden="true" />
@@ -48,7 +48,7 @@ export default function Footer() {
         </a>
         <a
           href="https://github.com/jayson-panganiban"
-          className="flex items-center gap-1 hover:text-accent transition"
+          className="flex items-center gap-1 hover:text-yellow-500 hover:brightness-125 dark:hover:text-yellow-400 transition"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub"
@@ -58,7 +58,7 @@ export default function Footer() {
         </a>
         <a
           href="https://www.linkedin.com/in/jayson-panganiban"
-          className="flex items-center gap-1 hover:text-accent transition"
+          className="flex items-center gap-1 hover:text-yellow-500 hover:brightness-125 dark:hover:text-yellow-400 transition"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="LinkedIn"

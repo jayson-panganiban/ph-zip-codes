@@ -38,19 +38,20 @@ export default function SearchBar({
         onKeyDown={onKeyDown}
         placeholder={placeholder}
         variant="search"
-        className={inputClassName}
+        className={`search ${inputClassName}`}
         aria-label={ariaLabel || placeholder}
         autoFocus={autoFocus}
         autoComplete="off"
         spellCheck={false}
         data-ms-editor="false"
+        id="search-input"
       />
       {value && onClear && (
         <Button
           type="button"
           size="icon"
           variant="ghost"
-          className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full text-muted-foreground hover:bg-muted"
+          className="absolute right-14 top-1/2 -translate-y-1/2 rounded-full text-muted-foreground hover:bg-muted/50 transition-colors"
           onClick={() => {
             onClear();
             inputRef.current?.focus();
@@ -63,7 +64,7 @@ export default function SearchBar({
       <Button
         type="submit"
         size="icon"
-        className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow"
+        className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full btn-primary shadow-lg"
         aria-label="Search"
         tabIndex={-1}
         disabled

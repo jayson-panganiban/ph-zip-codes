@@ -44,14 +44,14 @@ function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col bg-muted/40">
+    <main className="min-h-screen flex flex-col bg-gradient-dark bg-texture">
       <div className="flex-1 flex flex-col items-center justify-center px-4 w-full max-w-4xl mx-auto">
-        <h1 className="font-satoshi text-4xl md:text-5xl font-bold mb-4 tracking-tight text-balance text-center">
-          Find Philippines Zip Codes
+        <h1 className="font-satoshi text-4xl md:text-5xl font-bold mb-4 tracking-tight text-balance text-center text-glow">
+          Find Philippines ZIP Codes
         </h1>
-        <p className="text-muted-foreground mb-8 text-center max-w-lg">
-          Search for zip codes by location or browse through regions, provinces,
-          and municipalities.
+        <p className="text-muted-foreground mb-2 text-center max-w-lg">
+          Search for postal codes by location or browse through regions,
+          provinces, and municipalities across the Philippines.
         </p>
 
         <form
@@ -64,7 +64,7 @@ function Home() {
             onChange={setSearchQuery}
             onClear={handleClear}
             onKeyDown={handleKeyDown}
-            placeholder="Type a city, municipality, zip code, or province…"
+            placeholder="Type a city, municipality, ZIP code, or province..."
             aria-label="Search cities and municipalities"
             autoFocus
           />
@@ -75,7 +75,7 @@ function Home() {
           <Button
             asChild
             variant="default"
-            className="min-w-[160px] transition-transform hover:scale-[1.03] hover:shadow-lg rounded-lg flex items-center gap-2"
+            className="min-w-[160px] transition-transform hover:scale-[1.03] hover:shadow-lg rounded-lg flex items-center gap-2 btn-primary"
           >
             <Link href="/regions">
               <Globe className="w-5 h-5 mr-2" aria-hidden="true" />
@@ -85,7 +85,7 @@ function Home() {
           <Button
             asChild
             variant="default"
-            className="min-w-[160px] transition-transform hover:scale-[1.03] hover:shadow-lg rounded-lg flex items-center gap-2"
+            className="min-w-[160px] transition-transform hover:scale-[1.03] hover:shadow-lg rounded-lg flex items-center gap-2 btn-primary"
           >
             <Link href="/provinces">
               <Map className="w-5 h-5 mr-2" aria-hidden="true" />
@@ -95,7 +95,7 @@ function Home() {
           <Button
             asChild
             variant="default"
-            className="min-w-[160px] transition-transform hover:scale-[1.03] hover:shadow-lg rounded-lg flex items-center gap-2"
+            className="min-w-[160px] transition-transform hover:scale-[1.03] hover:shadow-lg rounded-lg flex items-center gap-2 btn-primary"
           >
             <Link href="/municipalities">
               <MapPin className="w-5 h-5 mr-2" aria-hidden="true" />
@@ -152,6 +152,49 @@ function Home() {
             )
           )}
         </div>
+
+        {(!debouncedQuery || debouncedQuery.trim().length < 3) && (
+          <div className="w-full mt-16 max-w-4xl mx-auto">
+            <div className="bg-card/50 rounded-lg p-6 border">
+              <div className="grid md:grid-cols-2 gap-6 text-sm text-muted-foreground">
+                <div>
+                  <h3 className="font-medium text-foreground mb-2">
+                    What is a ZIP Code?
+                  </h3>
+                  <p className="mb-3">
+                    ZIP codes (postal codes) in the Philippines are used by the
+                    Philippine Postal Corporation (PHLPost) to efficiently sort
+                    and deliver mail. Each location has a unique 4-digit code.
+                  </p>
+                  <h3 className="font-medium text-foreground mb-2">
+                    How to Use ZIP Codes
+                  </h3>
+                  <p>
+                    Include the ZIP code in your address when sending mail,
+                    packages, or filling out forms. This ensures faster and more
+                    accurate delivery across the Philippines.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-medium text-foreground mb-2">Coverage</h3>
+                  <p className="mb-3">
+                    This directory covers all regions including Metro Manila,
+                    Luzon, Visayas, and Mindanao. Find ZIP codes for all 81
+                    provinces and over 1,600 municipalities and cities.
+                  </p>
+                  <h3 className="font-medium text-foreground mb-2">
+                    Popular Searches
+                  </h3>
+                  <p>
+                    Manila (1000-1096), Quezon City (1100-1128), Makati
+                    (1200-1235), Cebu City (6000), Davao City (8000), and other
+                    major Philippine cities.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <BackToTop />
